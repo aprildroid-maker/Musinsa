@@ -45,6 +45,7 @@ android {
 }
 
 dependencies {
+    implementation(project(":core:domain"))
 
     implementation(libs.retrofit)
     implementation(libs.serialization.converter)
