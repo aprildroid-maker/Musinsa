@@ -10,7 +10,7 @@ data class HomeResponse(
     @SerialName("header")
     val header: HeaderResponse?,
     @SerialName("contents")
-    val contents: List<ContentResponse>?,
+    val contents: ContentResponse?,
     @SerialName("footer")
     val footer: FooterResponse?,
 )

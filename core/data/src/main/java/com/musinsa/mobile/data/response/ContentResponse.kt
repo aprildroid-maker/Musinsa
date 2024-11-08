@@ -13,9 +13,9 @@ data class ContentResponse(
     @SerialName("type")
     val type: String?,
     @SerialName("banners")
-    val banners: List<BannerResponse>?,
+    val banners: List<BannerResponse>? = emptyList(),
     @SerialName("goods")
-    val goods: List<GoodResponse>?,
+    val goods: List<GoodResponse>? = emptyList(),
     @SerialName("styles")
-    val styles: List<StyleResponse>?
+    val styles: List<StyleResponse>? = emptyList()
 )

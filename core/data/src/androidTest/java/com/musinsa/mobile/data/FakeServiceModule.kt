@@ -6,7 +6,6 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.components.SingletonComponent
 import dagger.hilt.testing.TestInstallIn
-import jakarta.inject.Singleton
 import retrofit2.Retrofit
 
 @Module
@@ -14,7 +13,7 @@ import retrofit2.Retrofit
     components = [SingletonComponent::class],
     replaces = [ServiceModule::class]
 )
-class FakeServiceModule {
+internal class FakeServiceModule {
     @Provides
     fun providesHomeService(
         retrofit: Retrofit
