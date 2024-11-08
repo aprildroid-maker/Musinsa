@@ -15,7 +15,7 @@ android {
     defaultConfig {
         minSdk = 28
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "com.musinsa.mobile.data.HiltTestRunner"
         buildFeatures.buildConfig = true
         consumerProguardFiles("consumer-rules.pro")
 
