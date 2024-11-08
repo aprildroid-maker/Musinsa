@@ -54,5 +54,5 @@ dependencies {
     testImplementation(libs.junit)
 
     implementation(libs.hilt.android)
-    annotationProcessor(libs.hilt.android.compiler)
+    kapt(libs.hilt.android.compiler)
 }

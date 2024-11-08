@@ -1,7 +1,7 @@
 [versions]
 # Common
 agp = "8.7.2"
-coreKtx = "1.15.0"
+coreKtx = "1.13.1"
 androidxLifecycle = "2.8.7"
 
 # Compose

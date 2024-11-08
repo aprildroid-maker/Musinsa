@@ -52,12 +52,13 @@ dependencies {
     implementation(libs.okHttp.core)
     implementation(libs.okhttp.logging)
     implementation(libs.hilt.android)
-    annotationProcessor(libs.hilt.android.compiler)
+    kapt(libs.hilt.android.compiler)
 
     kaptTest(libs.hilt.android.compiler)
     kaptTest(libs.hilt.android.testing)
     androidTestImplementation(libs.hilt.android.testing)
     androidTestImplementation(libs.androidx.runner)
+    androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.kotlinx.coroutines.test)
     androidTestImplementation(libs.assertj.core)
 }
