@@ -7,9 +7,7 @@ import javax.inject.Inject
 class DefaultHomeDataSource @Inject constructor(
     private val homeService: HomeService,
 ) : HomeDataSource {
-    override suspend fun getHomeList(): Result<List<HomeResponse>> {
-        return runCatching {
-            homeService.homeList().data
-        }
+    override suspend fun getHomeList(): List<HomeResponse> {
+        return homeService.homeList().data
     }
 }

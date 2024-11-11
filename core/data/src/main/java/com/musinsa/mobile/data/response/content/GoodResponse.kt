@@ -1,6 +1,8 @@
 package com.musinsa.mobile.data.response.content
 
 import android.annotation.SuppressLint
+import com.musinsa.mobile.domain.model.base.DomainMapper
+import com.musinsa.mobile.domain.model.content.Good
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -19,4 +21,16 @@ data class GoodResponse(
     val linkUrl: String?,
     @SerialName("hasCoupon")
     val hasCoupon: Boolean?
-)
+) : DomainMapper<Good> {
+
+    override fun toDomainModel(): Good {
+        return Good(
+            brandName = brandName,
+            price = price,
+            saleRate = saleRate,
+            thumbnailUrl = thumbnailUrl,
+            linkUrl = linkUrl,
+            hasCoupon = hasCoupon
+        )
+    }
+}

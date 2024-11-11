@@ -30,7 +30,9 @@ class DataSourceTest {
 
     @Test
     fun `정상적으로_홈_데이터를_호출한다`() = runTest {
-        val result = homeDataSource.getHomeList()
+        val result = runCatching {
+            homeDataSource.getHomeList()
+        }
         assertThat(result.isSuccess).isEqualTo(true)
     }
 }

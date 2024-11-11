@@ -1,6 +1,8 @@
 package com.musinsa.mobile.data.response.content
 
 import android.annotation.SuppressLint
+import com.musinsa.mobile.domain.model.base.DomainMapper
+import com.musinsa.mobile.domain.model.content.Banner
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -17,4 +19,15 @@ data class BannerResponse(
     val thumbnailUrl: String?,
     @SerialName("linkURL")
     val linkUrl: String?
-)
+) : DomainMapper<Banner> {
+
+    override fun toDomainModel(): Banner {
+        return Banner(
+            title = title,
+            keyword = keyword,
+            description = description,
+            thumbnailUrl = thumbnailUrl,
+            linkUrl = linkUrl
+        )
+    }
+}
