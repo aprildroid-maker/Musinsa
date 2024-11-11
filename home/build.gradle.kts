@@ -50,13 +50,16 @@ dependencies {
     implementation(project(":core:designsystem"))
 
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.lifecycle.viewModel.compose)
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.mavericks)
+    implementation(libs.coil.compose)
     testImplementation(libs.junit)
 
     implementation(libs.hilt.android)
