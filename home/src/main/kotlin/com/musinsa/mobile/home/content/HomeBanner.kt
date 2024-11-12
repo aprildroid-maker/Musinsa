@@ -27,7 +27,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.musinsa.mobile.designsystem.header.TextBanner
+import com.musinsa.mobile.designsystem.contents.TextBanner
 import com.musinsa.mobile.home.model.ContentUiModel
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.channels.consumeEach

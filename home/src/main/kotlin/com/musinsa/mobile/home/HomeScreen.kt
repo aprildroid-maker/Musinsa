@@ -39,10 +39,11 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.musinsa.mobile.designsystem.header.HomeHeader
+import com.musinsa.mobile.domain.model.Content
 import com.musinsa.mobile.domain.model.ContentType
 import com.musinsa.mobile.home.content.Banners
-import com.musinsa.mobile.home.content.Goods
-import com.musinsa.mobile.home.content.Styles
+import com.musinsa.mobile.home.content.GridGoods
+import com.musinsa.mobile.home.content.ScrollGoods
 import com.musinsa.mobile.home.model.ContentUiModel
 import com.musinsa.mobile.home.model.HomeUiModel
 import kotlinx.coroutines.ObsoleteCoroutinesApi
@@ -137,14 +138,19 @@ private fun HomeScreenLoaded(
                     banners = item.contents.filterIsInstance<ContentUiModel.BannerUiModel>()
                 )
 
-                ContentType.GRID, ContentType.SCROLL -> Goods(
+                ContentType.GRID -> GridGoods(
                     modifier = modifier,
                     goods = item.contents.filterIsInstance<ContentUiModel.GoodUiModel>()
                 )
 
-                ContentType.STYLE -> Styles(
+                ContentType.SCROLL -> ScrollGoods(
                     modifier = modifier,
-                    styles = item.contents.filterIsInstance<ContentUiModel.StyleUiModel>()
+                    styles = item.contents.filterIsInstance<ContentUiModel.GoodUiModel>()
+                )
+
+                ContentType.STYLE -> ScrollGoods(
+                    modifier = modifier,
+                    styles = item.contents.filterIsInstance<ContentUiModel.GoodUiModel>()
                 )
 
                 else -> {}

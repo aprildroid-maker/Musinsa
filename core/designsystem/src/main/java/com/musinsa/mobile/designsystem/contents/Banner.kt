@@ -1,4 +1,4 @@
-package com.musinsa.mobile.designsystem.header
+package com.musinsa.mobile.designsystem.contents
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
