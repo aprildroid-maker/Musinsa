@@ -10,16 +10,20 @@ package com.musinsa.mobile.home
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.DragInteraction
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -46,11 +50,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
+import com.musinsa.mobile.designsystem.header.Banner
 import com.musinsa.mobile.domain.model.ContentType
 import com.musinsa.mobile.home.model.ContentUiModel
 import kotlinx.coroutines.ObsoleteCoroutinesApi
@@ -192,17 +199,61 @@ private fun Banners(
         stiffness = Spring.StiffnessLow
     )
 
-    HorizontalPager(
-        modifier = modifier.fillMaxWidth(),
-        state = bannerPagerState,
-        beyondViewportPageCount = 1
-    ) { page ->
-        AsyncImage(
-            modifier = Modifier.fillMaxWidth(),
-            model = banners[page % pageSize].thumbnailUrl,
-            contentScale = ContentScale.Crop,
-            contentDescription = "Banner"
-        )
+    Box(modifier = Modifier.fillMaxWidth()) {
+        AnimatedContent(
+            targetState = bannerPagerState.currentPage,
+            transitionSpec = {
+                fadeIn(animationSpec = bannerSpringAnimation).togetherWith(
+                    fadeOut(
+                        animationSpec = bannerSpringAnimation
+                    )
+                )
+            },
+            label = "bannerImage"
+        ) { page ->
+            val banner = banners[page % pageSize]
+            AsyncImage(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(1f),
+                model = banner.thumbnailUrl,
+                contentScale = ContentScale.Crop,
+                contentDescription = "banner"
+            )
+        }
+
+        HorizontalPager(
+            modifier = modifier
+                .fillMaxWidth()
+                .align(Alignment.BottomCenter),
+            state = bannerPagerState,
+            beyondViewportPageCount = 1
+        ) { page ->
+            val banner = banners[page % pageSize]
+            Banner(
+                modifier = Modifier.fillMaxWidth(),
+                title = banner.title,
+                keyword = banner.keyword,
+                description = banner.description,
+            )
+        }
+
+        if (pageSize > 1) {
+            Box(
+                modifier = Modifier
+                    .background(Color.LightGray.copy(0.7f))
+                    .padding(horizontal = 12.dp, vertical = 2.dp)
+                    .align(Alignment.BottomEnd),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "${bannerPagerState.currentPage % pageSize + 1} / $pageSize",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color.White,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
+        }
     }
 
     LaunchedEffect(key1 = Unit) {
