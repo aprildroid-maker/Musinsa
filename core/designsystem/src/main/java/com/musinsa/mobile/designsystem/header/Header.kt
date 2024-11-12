@@ -68,6 +68,7 @@ fun HomeHeader(
 @Composable
 private fun PreviewHeader(modifier: Modifier = Modifier) {
     HomeHeader(
+        modifier = modifier,
         title = "최신 상품",
         linkUrl = null,
         iconUrl = null,

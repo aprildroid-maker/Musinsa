@@ -8,63 +8,44 @@
 package com.musinsa.mobile.home
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.spring
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
-import androidx.compose.foundation.interaction.DragInteraction
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import coil.compose.AsyncImage
-import com.musinsa.mobile.designsystem.header.Banner
+import com.musinsa.mobile.designsystem.header.HomeHeader
 import com.musinsa.mobile.domain.model.ContentType
+import com.musinsa.mobile.home.content.Banners
+import com.musinsa.mobile.home.content.Goods
+import com.musinsa.mobile.home.content.Styles
 import com.musinsa.mobile.home.model.ContentUiModel
+import com.musinsa.mobile.home.model.HomeUiModel
 import kotlinx.coroutines.ObsoleteCoroutinesApi
-import kotlinx.coroutines.channels.consumeEach
-import kotlinx.coroutines.channels.ticker
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.onStart
 
 @Composable
 fun HomeScreen(
@@ -120,55 +101,43 @@ private fun HomeScreenLoaded(
     uiState: HomeUiState.Success
 ) {
     val listState = rememberLazyListState()
-    var headerState by remember { mutableStateOf("") }
+    var headerState by remember { mutableStateOf<HomeUiModel?>(null) }
 
     LazyColumn(
-        state = listState
+        state = listState,
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         stickyHeader {
             AnimatedContent(
                 targetState = headerState,
                 transitionSpec = {
-                    if (targetState.isEmpty()) {
+                    if (headerState?.header != null) {
                         slideInVertically() togetherWith slideOutVertically()
                     } else {
                         slideInVertically() togetherWith slideOutVertically()
                     }
                 },
                 label = "Header"
-            ) { title ->
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp, horizontal = 12.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text(
-                        text = title,
-                        modifier = Modifier.padding(16.dp),
-                        style = MaterialTheme.typography.headlineMedium
-                    )
-                    Spacer(modifier = Modifier)
-                    TextButton(
+            ) { headerState ->
+                if (headerState?.header != null) {
+                    HomeHeader(
+                        title = headerState.header.title,
+                        linkUrl = headerState.header.linkUrl,
+                        iconUrl = headerState.header.iconUrl,
                         onClick = { }
-                    ) {
-                        Text("전체")
-                    }
+                    )
                 }
-
             }
         }
 
         items(items = uiState.data) { item ->
-            headerState = item.header?.title.orEmpty()
-
             when (item.type) {
                 ContentType.BANNER -> Banners(
                     modifier = modifier,
                     banners = item.contents.filterIsInstance<ContentUiModel.BannerUiModel>()
                 )
 
-                ContentType.GRID -> Goods(
+                ContentType.GRID, ContentType.SCROLL -> Goods(
                     modifier = modifier,
                     goods = item.contents.filterIsInstance<ContentUiModel.GoodUiModel>()
                 )
@@ -182,133 +151,10 @@ private fun HomeScreenLoaded(
             }
         }
     }
-}
 
-@Composable
-private fun Banners(
-    modifier: Modifier = Modifier,
-    banners: List<ContentUiModel.BannerUiModel>
-) {
-    val pageSize = banners.size
-    val pageCount = if (pageSize > 1) pageSize * 500 else pageSize
-    val bannerPagerState = rememberPagerState(initialPage = pageCount / 2, pageCount = {
-        pageCount
-    })
-    val bannerSpringAnimation = spring<Float>(
-        dampingRatio = Spring.DampingRatioNoBouncy,
-        stiffness = Spring.StiffnessLow
-    )
-
-    Box(modifier = Modifier.fillMaxWidth()) {
-        AnimatedContent(
-            targetState = bannerPagerState.currentPage,
-            transitionSpec = {
-                fadeIn(animationSpec = bannerSpringAnimation).togetherWith(
-                    fadeOut(
-                        animationSpec = bannerSpringAnimation
-                    )
-                )
-            },
-            label = "bannerImage"
-        ) { page ->
-            val banner = banners[page % pageSize]
-            AsyncImage(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(1f),
-                model = banner.thumbnailUrl,
-                contentScale = ContentScale.Crop,
-                contentDescription = "banner"
-            )
-        }
-
-        HorizontalPager(
-            modifier = modifier
-                .fillMaxWidth()
-                .align(Alignment.BottomCenter),
-            state = bannerPagerState,
-            beyondViewportPageCount = 1
-        ) { page ->
-            val banner = banners[page % pageSize]
-            Banner(
-                modifier = Modifier.fillMaxWidth(),
-                title = banner.title,
-                keyword = banner.keyword,
-                description = banner.description,
-            )
-        }
-
-        if (pageSize > 1) {
-            Box(
-                modifier = Modifier
-                    .background(Color.LightGray.copy(0.7f))
-                    .padding(horizontal = 12.dp, vertical = 2.dp)
-                    .align(Alignment.BottomEnd),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "${bannerPagerState.currentPage % pageSize + 1} / $pageSize",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = Color.White,
-                    fontWeight = FontWeight.SemiBold
-                )
-            }
-        }
-    }
-
-    LaunchedEffect(key1 = Unit) {
-        if (pageSize > 1) {
-            bannerPagerState.interactionSource.interactions
-                .onStart { emit(DragInteraction.Start()) }
-                .collectLatest {
-                    ticker(
-                        delayMillis = 3000L,
-                        initialDelayMillis = 4000L,
-                    ).consumeEach {
-                        bannerPagerState.animateScrollToPage(
-                            page = bannerPagerState.currentPage + 1,
-                            animationSpec = bannerSpringAnimation
-                        )
-                    }
-                }
-        }
-    }
-}
-
-@Composable
-private fun Goods(
-    modifier: Modifier = Modifier,
-    goods: List<ContentUiModel.GoodUiModel>
-) {
-    LazyRow(
-        modifier = modifier.fillMaxWidth()
-    ) {
-        items(goods) {
-            AsyncImage(
-                modifier = Modifier.size(100.dp),
-                model = it.thumbnailUrl,
-                contentScale = ContentScale.Crop,
-                contentDescription = "Goods",
-            )
-        }
-    }
-}
-
-@Composable
-private fun Styles(
-    modifier: Modifier = Modifier,
-    styles: List<ContentUiModel.StyleUiModel>
-) {
-    LazyRow(
-        modifier = modifier.fillMaxWidth()
-    ) {
-        items(styles) {
-            AsyncImage(
-                modifier = Modifier.size(100.dp),
-                model = it.thumbnailUrl,
-                contentScale = ContentScale.Crop,
-                contentDescription = "Goods",
-            )
+    LaunchedEffect(Unit) {
+        snapshotFlow { listState.firstVisibleItemIndex }.collect { index ->
+            headerState = uiState.data[index]
         }
     }
 }
