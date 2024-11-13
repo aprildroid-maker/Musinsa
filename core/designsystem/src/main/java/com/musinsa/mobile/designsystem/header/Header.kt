@@ -19,12 +19,12 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 
 @Composable
-fun HomeHeader(
+fun Header(
     modifier: Modifier = Modifier,
     title: String?,
     linkUrl: String?,
     iconUrl: String?,
-    onClick: (() -> Unit)? = null
+    onClick: (String?) -> Unit
 ) {
     if (!title.isNullOrBlank() || !linkUrl.isNullOrBlank() || !iconUrl.isNullOrBlank()) {
         Row(
@@ -51,7 +51,7 @@ fun HomeHeader(
             Spacer(modifier = Modifier.weight(1f))
             if (!linkUrl.isNullOrBlank()) {
                 TextButton(
-                    onClick = onClick ?: { }
+                    onClick = { onClick(linkUrl) }
                 ) {
                     Text(
                         text = "전체",
@@ -67,7 +67,7 @@ fun HomeHeader(
 @Preview
 @Composable
 private fun PreviewHeader(modifier: Modifier = Modifier) {
-    HomeHeader(
+    Header(
         modifier = modifier,
         title = "최신 상품",
         linkUrl = null,

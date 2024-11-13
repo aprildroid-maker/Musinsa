@@ -1,5 +1,6 @@
 package com.musinsa.mobile.designsystem.contents
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,9 +20,11 @@ fun TextBanner(
     title: String?,
     keyword: String?,
     description: String?,
+    linkUrl: String?,
+    onClick: (String?) -> Unit,
 ) {
     Box(
-        modifier = modifier,
+        modifier = modifier.clickable(enabled = !linkUrl.isNullOrEmpty()) { onClick(linkUrl) },
         contentAlignment = Alignment.BottomCenter
     ) {
         Column(

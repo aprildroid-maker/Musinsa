@@ -1,9 +1,6 @@
-@file:OptIn(ExperimentalLayoutApi::class)
-
 package com.musinsa.mobile.home.content
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -11,7 +8,6 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -22,7 +18,8 @@ import com.musinsa.mobile.home.model.ContentUiModel
 @Composable
 internal fun GridGoods(
     modifier: Modifier = Modifier,
-    goods: List<ContentUiModel.GoodUiModel>
+    goods: List<ContentUiModel.GoodUiModel>,
+    onClick: (String?) -> Unit
 ) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(3),
@@ -39,7 +36,7 @@ internal fun GridGoods(
                 thumbnailUrl = item.thumbnailUrl,
                 linkUrl = item.linkUrl,
                 hasCoupon = item.hasCoupon == true,
-                onClick = { }
+                onClick = onClick
             )
         }
     }
@@ -48,7 +45,8 @@ internal fun GridGoods(
 @Composable
 internal fun ScrollGoods(
     modifier: Modifier = Modifier,
-    styles: List<ContentUiModel.GoodUiModel>
+    styles: List<ContentUiModel.GoodUiModel>,
+    onClick: (String?) -> Unit
 ) {
     LazyRow(
         modifier = modifier.fillMaxWidth(),
@@ -62,7 +60,7 @@ internal fun ScrollGoods(
                 thumbnailUrl = it.thumbnailUrl,
                 linkUrl = it.linkUrl,
                 hasCoupon = it.hasCoupon == true,
-                onClick = { }
+                onClick = onClick
             )
         }
     }

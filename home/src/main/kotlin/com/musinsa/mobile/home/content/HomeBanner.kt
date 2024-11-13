@@ -38,7 +38,8 @@ import kotlinx.coroutines.flow.onStart
 @Composable
 internal fun Banners(
     modifier: Modifier = Modifier,
-    banners: List<ContentUiModel.BannerUiModel>
+    banners: List<ContentUiModel.BannerUiModel>,
+    onClick: (String?) -> Unit,
 ) {
     val pageSize = banners.size
     val pageCount = if (pageSize > 1) pageSize * 500 else pageSize
@@ -84,6 +85,8 @@ internal fun Banners(
                 title = banner.title,
                 keyword = banner.keyword,
                 description = banner.description,
+                linkUrl = banner.linkUrl,
+                onClick = onClick
             )
         }
 

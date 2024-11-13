@@ -7,11 +7,10 @@
 
 package com.musinsa.mobile.home
 
+import android.content.Context
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,6 +23,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -35,15 +35,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.airbnb.mvrx.compose.collectAsState
 import com.airbnb.mvrx.compose.mavericksViewModel
-import com.airbnb.mvrx.withState
-import com.musinsa.mobile.designsystem.header.HomeHeader
-import com.musinsa.mobile.domain.model.Content
+import com.musinsa.mobile.designsystem.header.Header
 import com.musinsa.mobile.domain.model.ContentType
+import com.musinsa.mobile.home.browser.launchCustomChromeTab
 import com.musinsa.mobile.home.content.Banners
 import com.musinsa.mobile.home.content.GridGoods
 import com.musinsa.mobile.home.content.ScrollGoods
@@ -77,10 +76,11 @@ fun HomeScreen(
 @Composable
 private fun HomeScreenError(modifier: Modifier = Modifier) {
     Box(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize().background(MaterialTheme.colorScheme.background),
         contentAlignment = Alignment.Center
     ) {
         Column(
+            modifier = Modifier.background(MaterialTheme.colorScheme.onBackground).padding(32.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Icon(imageVector = Icons.Default.Info, contentDescription = "Error")
@@ -105,6 +105,8 @@ private fun HomeScreenLoaded(
     uiState: HomeUiState.Success
 ) {
     val listState = rememberLazyListState()
+    val context = LocalContext.current
+    val backgroundColor = MaterialTheme.colorScheme.background.toArgb()
     var headerState by remember { mutableStateOf<HomeUiModel?>(null) }
 
     LazyColumn(
@@ -119,11 +121,11 @@ private fun HomeScreenLoaded(
                 label = "Header"
             ) { headerState ->
                 if (headerState?.header != null) {
-                    HomeHeader(
+                    Header(
                         title = headerState.header.title,
                         linkUrl = headerState.header.linkUrl,
                         iconUrl = headerState.header.iconUrl,
-                        onClick = { }
+                        onClick = { navigateToLink(context, it, backgroundColor) }
                     )
                 }
             }
@@ -132,19 +134,23 @@ private fun HomeScreenLoaded(
         items(items = uiState.data) { item ->
             when (item.type) {
                 ContentType.BANNER -> Banners(
-                    banners = item.contents.filterIsInstance<ContentUiModel.BannerUiModel>()
+                    banners = item.contents.filterIsInstance<ContentUiModel.BannerUiModel>(),
+                    onClick = { navigateToLink(context, it, backgroundColor) }
                 )
 
                 ContentType.GRID -> GridGoods(
-                    goods = item.contents.filterIsInstance<ContentUiModel.GoodUiModel>()
+                    goods = item.contents.filterIsInstance<ContentUiModel.GoodUiModel>(),
+                    onClick = { navigateToLink(context, it, backgroundColor) }
                 )
 
                 ContentType.SCROLL -> ScrollGoods(
-                    styles = item.contents.filterIsInstance<ContentUiModel.GoodUiModel>()
+                    styles = item.contents.filterIsInstance<ContentUiModel.GoodUiModel>(),
+                    onClick = { navigateToLink(context, it, backgroundColor) }
                 )
 
                 ContentType.STYLE -> ScrollGoods(
-                    styles = item.contents.filterIsInstance<ContentUiModel.GoodUiModel>()
+                    styles = item.contents.filterIsInstance<ContentUiModel.GoodUiModel>(),
+                    onClick = { navigateToLink(context, it, backgroundColor) }
                 )
 
                 else -> {}
@@ -157,4 +163,13 @@ private fun HomeScreenLoaded(
             headerState = uiState.data[index]
         }
     }
+}
+
+private fun navigateToLink(context: Context, url: String?, color: Int) {
+    if (url.isNullOrBlank()) return
+    launchCustomChromeTab(
+        context = context,
+        url = url,
+        toolbarColor = color
+    )
 }

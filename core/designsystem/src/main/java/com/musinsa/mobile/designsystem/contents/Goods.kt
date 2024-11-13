@@ -34,7 +34,7 @@ fun ProductItem(
     onClick: (String?) -> Unit,
 ) {
     Column(
-        modifier = modifier.clickable { onClick(linkUrl) },
+        modifier = modifier.clickable(enabled = !linkUrl.isNullOrEmpty()) { onClick(linkUrl) },
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         ProductImage(

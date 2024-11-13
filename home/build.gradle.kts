@@ -58,6 +58,7 @@ dependencies {
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.browser)
     implementation(libs.mavericks)
     implementation(libs.mavericks.compose)
     implementation(libs.mavericks.hilt)
