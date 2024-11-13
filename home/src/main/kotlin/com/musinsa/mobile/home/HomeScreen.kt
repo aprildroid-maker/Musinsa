@@ -8,7 +8,6 @@
 package com.musinsa.mobile.home
 
 import android.content.Context
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -17,8 +16,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.CircularProgressIndicator
@@ -27,12 +24,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
@@ -48,7 +41,6 @@ import com.musinsa.mobile.home.content.GridGoods
 import com.musinsa.mobile.home.content.ScrollGoods
 import com.musinsa.mobile.home.content.StyleGoods
 import com.musinsa.mobile.home.model.ContentUiModel
-import com.musinsa.mobile.home.model.HomeUiModel
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 
 @Composable
@@ -67,7 +59,7 @@ fun HomeScreen(
             is HomeUiState.Loading -> HomeScreenLoading(modifier = paddingModifier)
             is HomeUiState.Error -> HomeScreenError(modifier = paddingModifier)
             is HomeUiState.Success -> HomeScreenLoaded(
-                modifier = paddingModifier,
+                modifier = paddingModifier.fillMaxSize(),
                 uiState = uiState as HomeUiState.Success
             )
         }
@@ -109,65 +101,49 @@ private fun HomeScreenLoaded(
     modifier: Modifier = Modifier,
     uiState: HomeUiState.Success
 ) {
-    val listState = rememberLazyListState()
     val context = LocalContext.current
     val backgroundColor = MaterialTheme.colorScheme.background.toArgb()
-    var headerState by remember { mutableStateOf<HomeUiModel?>(null) }
 
     LazyColumn(
         modifier = modifier,
-        state = listState,
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        stickyHeader {
-            if (headerState != null) {
-                Header(
-                    title = headerState?.header?.title,
-                    linkUrl = headerState?.header?.linkUrl,
-                    iconUrl = headerState?.header?.iconUrl,
-                    onClick = { navigateToLink(context, it, backgroundColor) }
-                )
+        uiState.data.forEach { uiModel ->
+            if (uiModel.header != null) {
+                item {
+                    Header(
+                        title = uiModel.header.title,
+                        linkUrl = uiModel.header.linkUrl,
+                        iconUrl = uiModel.header.iconUrl,
+                        onClick = { navigateToLink(context, it, backgroundColor) }
+                    )
+                }
             }
 
-        }
+            item(contentType = { uiModel.type }) {
+                when (uiModel.type) {
+                    ContentType.BANNER -> Banners(
+                        banners = uiModel.contents.filterIsInstance<ContentUiModel.BannerUiModel>(),
+                        onClick = { navigateToLink(context, it, backgroundColor) }
+                    )
 
-        items(
-            items = uiState.data,
-            contentType = { it.type }
-        ) { item ->
-            when (item.type) {
-                ContentType.BANNER -> Banners(
-                    banners = item.contents.filterIsInstance<ContentUiModel.BannerUiModel>(),
-                    onClick = { navigateToLink(context, it, backgroundColor) }
-                )
+                    ContentType.GRID -> GridGoods(
+                        goods = uiModel.contents.filterIsInstance<ContentUiModel.GoodUiModel>(),
+                        onClick = { navigateToLink(context, it, backgroundColor) }
+                    )
 
-                ContentType.GRID -> GridGoods(
-                    goods = item.contents.filterIsInstance<ContentUiModel.GoodUiModel>(),
-                    onClick = { navigateToLink(context, it, backgroundColor) }
-                )
+                    ContentType.SCROLL -> ScrollGoods(
+                        styles = uiModel.contents.filterIsInstance<ContentUiModel.GoodUiModel>(),
+                        onClick = { navigateToLink(context, it, backgroundColor) }
+                    )
 
-                ContentType.SCROLL -> ScrollGoods(
-                    styles = item.contents.filterIsInstance<ContentUiModel.GoodUiModel>(),
-                    onClick = { navigateToLink(context, it, backgroundColor) }
-                )
+                    ContentType.STYLE -> StyleGoods(
+                        styles = uiModel.contents.filterIsInstance<ContentUiModel.StyleUiModel>(),
+                        onClick = { navigateToLink(context, it, backgroundColor) }
+                    )
 
-                ContentType.STYLE -> StyleGoods(
-                    styles = item.contents.filterIsInstance<ContentUiModel.StyleUiModel>(),
-                    onClick = { navigateToLink(context, it, backgroundColor) }
-                )
-
-                else -> {}
-            }
-        }
-    }
-
-    LaunchedEffect(listState) {
-        snapshotFlow { listState.firstVisibleItemIndex }.collect { index ->
-            val visibleIndex = if (headerState != null) index - 1 else index
-            headerState = if (visibleIndex < 0 || visibleIndex >= uiState.data.size) {
-                null
-            } else {
-                uiState.data[visibleIndex]
+                    else -> {}
+                }
             }
         }
     }

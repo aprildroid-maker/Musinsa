@@ -3,7 +3,6 @@ package com.musinsa.mobile.designsystem.header
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -32,33 +31,40 @@ fun Header(
             modifier = modifier
                 .fillMaxWidth()
                 .background(MaterialTheme.colorScheme.surface)
-                .padding(horizontal = 8.dp, vertical = 12.dp),
+                .padding(horizontal = 12.dp, vertical = 8.dp),
             horizontalArrangement = Arrangement.spacedBy(6.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            if (!title.isNullOrBlank()) {
-                Text(
-                    modifier = Modifier.weight(1f),
-                    text = title,
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Bold,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
-                )
+            Row(
+                modifier = Modifier.weight(1f),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                if (!title.isNullOrBlank()) {
+                    Text(
+                        modifier = Modifier.weight(1f),
+                        text = title,
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontWeight = FontWeight.Bold,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+
+                if (!iconUrl.isNullOrBlank()) {
+                    AsyncImage(
+                        model = iconUrl,
+                        contentDescription = "header_icon"
+                    )
+                }
             }
-            if (!iconUrl.isNullOrBlank()) {
-                AsyncImage(
-                    model = iconUrl,
-                    contentDescription = "header_icon"
-                )
-            }
+
             if (!linkUrl.isNullOrBlank()) {
                 TextButton(
                     onClick = { onClick(linkUrl) }
                 ) {
                     Text(
                         text = "전체",
-                        style = MaterialTheme.typography.labelMedium,
+                        style = MaterialTheme.typography.bodyMedium,
                         color = Color.Gray
                     )
                 }
