@@ -38,13 +38,14 @@ sealed interface ContentUiModel {
         fun fromContent(content: Content): List<ContentUiModel?> {
             return when (content.type) {
                 ContentType.BANNER -> content.banners?.map { fromDomainModel(it) } ?: emptyList()
-                ContentType.GRID, ContentType.SCROLL -> content.goods?.map { fromDomainModel(it) } ?: emptyList()
-                ContentType.STYLE -> content.styles?.map { fromDomainModel(it) } ?: emptyList()
+                ContentType.GRID -> content.goods?.take(6)?.map { fromDomainModel(it) } ?: emptyList()
+                ContentType.SCROLL -> content.goods?.map { fromDomainModel(it) } ?: emptyList()
+                ContentType.STYLE -> content.styles?.take(6)?.map { fromDomainModel(it) } ?: emptyList()
                 else -> emptyList()
             }
         }
 
-        private fun fromDomainModel(model: Any?): ContentUiModel? {
+        fun fromDomainModel(model: Any?): ContentUiModel? {
             return when (model) {
                 is Banner -> BannerUiModel(
                     title = model.title,

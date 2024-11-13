@@ -2,6 +2,7 @@ package com.musinsa.mobile.data.response
 
 import android.annotation.SuppressLint
 import com.musinsa.mobile.domain.model.Footer
+import com.musinsa.mobile.domain.model.FooterType
 import com.musinsa.mobile.domain.model.base.DomainMapper
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -21,7 +22,7 @@ data class FooterResponse(
         return Footer(
             title = title,
             iconUrl = iconUrl,
-            type = type
+            type = type?.let { FooterType.from(it) }
         )
     }
 }

@@ -3,6 +3,7 @@ package com.musinsa.mobile.home.model
 import androidx.compose.runtime.Immutable
 import com.musinsa.mobile.domain.model.ContentType
 import com.musinsa.mobile.domain.model.Footer
+import com.musinsa.mobile.domain.model.FooterType
 import com.musinsa.mobile.domain.model.Header
 import com.musinsa.mobile.domain.model.Home
 

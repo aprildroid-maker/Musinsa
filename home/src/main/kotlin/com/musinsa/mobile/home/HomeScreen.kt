@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
@@ -31,8 +32,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.airbnb.mvrx.compose.collectAsState
 import com.airbnb.mvrx.compose.mavericksViewModel
+import com.musinsa.mobile.designsystem.footer.Footer
 import com.musinsa.mobile.designsystem.header.Header
 import com.musinsa.mobile.domain.model.ContentType
 import com.musinsa.mobile.home.browser.launchCustomChromeTab
@@ -60,46 +63,18 @@ fun HomeScreen(
             is HomeUiState.Error -> HomeScreenError(modifier = paddingModifier)
             is HomeUiState.Success -> HomeScreenLoaded(
                 modifier = paddingModifier.fillMaxSize(),
-                uiState = uiState as HomeUiState.Success
+                uiState = uiState as HomeUiState.Success,
+                onClick = viewModel::fetch
             )
         }
     }
 }
 
 @Composable
-private fun HomeScreenError(modifier: Modifier = Modifier) {
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background),
-        contentAlignment = Alignment.Center
-    ) {
-        Column(
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.onBackground)
-                .padding(32.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Icon(imageVector = Icons.Default.Info, contentDescription = "Error")
-            Text("오류가 발생했습니다.")
-        }
-    }
-}
-
-@Composable
-private fun HomeScreenLoading(modifier: Modifier = Modifier) {
-    Box(
-        modifier = modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        CircularProgressIndicator()
-    }
-}
-
-@Composable
 private fun HomeScreenLoaded(
     modifier: Modifier = Modifier,
-    uiState: HomeUiState.Success
+    uiState: HomeUiState.Success,
+    onClick: (Int) -> Unit,
 ) {
     val context = LocalContext.current
     val backgroundColor = MaterialTheme.colorScheme.background.toArgb()
@@ -108,7 +83,7 @@ private fun HomeScreenLoaded(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        uiState.data.forEach { uiModel ->
+        uiState.data.forEachIndexed { index, uiModel ->
             if (uiModel.header != null) {
                 item {
                     Header(
@@ -145,6 +120,51 @@ private fun HomeScreenLoaded(
                     else -> {}
                 }
             }
+
+            if (uiModel.footer != null) {
+                item {
+                    Box(
+                        modifier = Modifier.padding(horizontal = 12.dp)
+                    ) {
+                        Footer(
+                            modifier = Modifier.fillMaxWidth(),
+                            text = uiModel.footer.title,
+                            iconUrl = uiModel.footer.iconUrl,
+                            onClick = { onClick(index) }
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun HomeScreenLoading(modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        CircularProgressIndicator()
+    }
+}
+
+@Composable
+private fun HomeScreenError(modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            modifier = Modifier
+                .background(MaterialTheme.colorScheme.onBackground)
+                .padding(32.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Icon(imageVector = Icons.Default.Info, contentDescription = "Error")
+            Text("오류가 발생했습니다.")
         }
     }
 }
