@@ -6,10 +6,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -58,18 +56,16 @@ private fun ProductImage(
     thumbnailUrl: String?,
     hasCoupon: Boolean
 ) {
-    Box(
-        modifier = modifier.fillMaxWidth()
-    ) {
+    Box {
         AsyncImage(
-            modifier = Modifier.fillMaxWidth().aspectRatio(0.65f),
+            modifier = modifier.fillMaxWidth(),
             model = thumbnailUrl,
             contentDescription = "product_thumbnail",
-            contentScale = ContentScale.Inside
+            contentScale = ContentScale.Crop
         )
 
         // 쿠폰
-        if (hasCoupon == true) {
+        if (hasCoupon) {
             Surface(
                 modifier = Modifier
                     .align(Alignment.BottomStart)
@@ -111,6 +107,7 @@ private fun ProductInfo(
         }
 
         Row(
+            modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             if (price != null) {
@@ -123,7 +120,6 @@ private fun ProductInfo(
                     overflow = TextOverflow.Ellipsis
                 )
             }
-
             if (saleRate != null) {
                 Text(
                     text = "${saleRate}%",

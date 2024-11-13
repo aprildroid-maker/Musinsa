@@ -111,13 +111,7 @@ private fun HomeScreenLoaded(
         stickyHeader {
             AnimatedContent(
                 targetState = headerState,
-                transitionSpec = {
-                    if (headerState?.header != null) {
-                        slideInVertically() togetherWith slideOutVertically()
-                    } else {
-                        slideInVertically() togetherWith slideOutVertically()
-                    }
-                },
+
                 label = "Header"
             ) { headerState ->
                 if (headerState?.header != null) {
@@ -134,22 +128,18 @@ private fun HomeScreenLoaded(
         items(items = uiState.data) { item ->
             when (item.type) {
                 ContentType.BANNER -> Banners(
-                    modifier = modifier,
                     banners = item.contents.filterIsInstance<ContentUiModel.BannerUiModel>()
                 )
 
                 ContentType.GRID -> GridGoods(
-                    modifier = modifier,
                     goods = item.contents.filterIsInstance<ContentUiModel.GoodUiModel>()
                 )
 
                 ContentType.SCROLL -> ScrollGoods(
-                    modifier = modifier,
                     styles = item.contents.filterIsInstance<ContentUiModel.GoodUiModel>()
                 )
 
                 ContentType.STYLE -> ScrollGoods(
-                    modifier = modifier,
                     styles = item.contents.filterIsInstance<ContentUiModel.GoodUiModel>()
                 )
 

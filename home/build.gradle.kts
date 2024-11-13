@@ -59,6 +59,8 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.mavericks)
+    implementation(libs.mavericks.compose)
+    implementation(libs.mavericks.hilt)
     implementation(libs.coil.compose)
     testImplementation(libs.junit)
 
