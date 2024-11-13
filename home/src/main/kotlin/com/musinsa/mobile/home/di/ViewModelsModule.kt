@@ -14,12 +14,11 @@ import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.multibindings.IntoMap
 
-
 @Module
 @InstallIn(MavericksViewModelComponent::class)
 interface ViewModelsModule {
     @Binds
     @IntoMap
     @ViewModelKey(HomeViewModel::class)
-    fun helloViewModelFactory(factory: HomeViewModel.Factory): AssistedViewModelFactory<*, *>
+    fun bindsViewModelFactory(factory: HomeViewModel.Factory): AssistedViewModelFactory<*, *>
 }

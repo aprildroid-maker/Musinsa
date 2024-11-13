@@ -7,6 +7,7 @@ package com.musinsa.mobile.home
 
 import com.airbnb.mvrx.MavericksViewModel
 import com.airbnb.mvrx.MavericksViewModelFactory
+import com.airbnb.mvrx.ViewModelContext
 import com.airbnb.mvrx.hilt.AssistedViewModelFactory
 import com.airbnb.mvrx.hilt.hiltMavericksViewModelFactory
 import com.musinsa.mobile.domain.repository.HomeRepository
@@ -33,12 +34,12 @@ class HomeViewModel @AssistedInject constructor(
         }
 
         job = viewModelScope.launch {
-            setState { HomeUiState.Loading }
+            setState { HomeUiState.Loading() }
             homeRepository.getHomeList().onSuccess { homeList ->
                 val uiModel = homeList.map { HomeUiModel.from(it) }
                 setState { HomeUiState.Success(uiModel) }
             }.onFailure {
-                setState { HomeUiState.Error }
+                setState { HomeUiState.Error() }
             }
         }
     }
@@ -48,5 +49,9 @@ class HomeViewModel @AssistedInject constructor(
         override fun create(state: HomeUiState): HomeViewModel
     }
 
-    companion object : MavericksViewModelFactory<HomeViewModel, HomeUiState> by hiltMavericksViewModelFactory()
+    companion object : MavericksViewModelFactory<HomeViewModel, HomeUiState> by hiltMavericksViewModelFactory() {
+        override fun initialState(viewModelContext: ViewModelContext): HomeUiState {
+            return HomeUiState.Loading()
+        }
+    }
 }

@@ -10,8 +10,12 @@ import com.musinsa.mobile.home.model.HomeUiModel
 
 
 sealed interface HomeUiState : MavericksState {
-    data object Loading : HomeUiState
-    data object Error : HomeUiState
+    data class Loading(
+        private val empty: String = ""
+    ) : HomeUiState
+    data class Error(
+        private val empty: String = ""
+    ) : HomeUiState
     data class Success(
         val data: List<HomeUiModel>
     ) : HomeUiState
