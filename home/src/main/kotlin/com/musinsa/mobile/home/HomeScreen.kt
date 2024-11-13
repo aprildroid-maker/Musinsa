@@ -46,6 +46,7 @@ import com.musinsa.mobile.home.browser.launchCustomChromeTab
 import com.musinsa.mobile.home.content.Banners
 import com.musinsa.mobile.home.content.GridGoods
 import com.musinsa.mobile.home.content.ScrollGoods
+import com.musinsa.mobile.home.content.StyleGoods
 import com.musinsa.mobile.home.model.ContentUiModel
 import com.musinsa.mobile.home.model.HomeUiModel
 import kotlinx.coroutines.ObsoleteCoroutinesApi
@@ -76,11 +77,15 @@ fun HomeScreen(
 @Composable
 private fun HomeScreenError(modifier: Modifier = Modifier) {
     Box(
-        modifier = modifier.fillMaxSize().background(MaterialTheme.colorScheme.background),
+        modifier = modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background),
         contentAlignment = Alignment.Center
     ) {
         Column(
-            modifier = Modifier.background(MaterialTheme.colorScheme.onBackground).padding(32.dp),
+            modifier = Modifier
+                .background(MaterialTheme.colorScheme.onBackground)
+                .padding(32.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Icon(imageVector = Icons.Default.Info, contentDescription = "Error")
@@ -112,26 +117,24 @@ private fun HomeScreenLoaded(
     LazyColumn(
         modifier = modifier,
         state = listState,
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         stickyHeader {
-            AnimatedContent(
-                targetState = headerState,
-
-                label = "Header"
-            ) { headerState ->
-                if (headerState?.header != null) {
-                    Header(
-                        title = headerState.header.title,
-                        linkUrl = headerState.header.linkUrl,
-                        iconUrl = headerState.header.iconUrl,
-                        onClick = { navigateToLink(context, it, backgroundColor) }
-                    )
-                }
+            if (headerState != null) {
+                Header(
+                    title = headerState?.header?.title,
+                    linkUrl = headerState?.header?.linkUrl,
+                    iconUrl = headerState?.header?.iconUrl,
+                    onClick = { navigateToLink(context, it, backgroundColor) }
+                )
             }
+
         }
 
-        items(items = uiState.data) { item ->
+        items(
+            items = uiState.data,
+            contentType = { it.type }
+        ) { item ->
             when (item.type) {
                 ContentType.BANNER -> Banners(
                     banners = item.contents.filterIsInstance<ContentUiModel.BannerUiModel>(),
@@ -148,8 +151,8 @@ private fun HomeScreenLoaded(
                     onClick = { navigateToLink(context, it, backgroundColor) }
                 )
 
-                ContentType.STYLE -> ScrollGoods(
-                    styles = item.contents.filterIsInstance<ContentUiModel.GoodUiModel>(),
+                ContentType.STYLE -> StyleGoods(
+                    styles = item.contents.filterIsInstance<ContentUiModel.StyleUiModel>(),
                     onClick = { navigateToLink(context, it, backgroundColor) }
                 )
 
@@ -158,9 +161,14 @@ private fun HomeScreenLoaded(
         }
     }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(listState) {
         snapshotFlow { listState.firstVisibleItemIndex }.collect { index ->
-            headerState = uiState.data[index]
+            val visibleIndex = if (headerState != null) index - 1 else index
+            headerState = if (visibleIndex < 0 || visibleIndex >= uiState.data.size) {
+                null
+            } else {
+                uiState.data[visibleIndex]
+            }
         }
     }
 }

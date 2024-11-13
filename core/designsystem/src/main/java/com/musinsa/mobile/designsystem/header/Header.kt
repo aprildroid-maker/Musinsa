@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -37,9 +38,12 @@ fun Header(
         ) {
             if (!title.isNullOrBlank()) {
                 Text(
+                    modifier = Modifier.weight(1f),
                     text = title,
                     style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
             if (!iconUrl.isNullOrBlank()) {
@@ -48,7 +52,6 @@ fun Header(
                     contentDescription = "header_icon"
                 )
             }
-            Spacer(modifier = Modifier.weight(1f))
             if (!linkUrl.isNullOrBlank()) {
                 TextButton(
                     onClick = { onClick(linkUrl) }

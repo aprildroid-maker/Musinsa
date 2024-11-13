@@ -12,6 +12,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -20,6 +24,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import coil.compose.AsyncImagePainter
 import java.text.DecimalFormat
 
 @Composable
@@ -35,7 +40,7 @@ fun ProductItem(
 ) {
     Column(
         modifier = modifier.clickable(enabled = !linkUrl.isNullOrEmpty()) { onClick(linkUrl) },
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         ProductImage(
             thumbnailUrl = thumbnailUrl,
@@ -51,21 +56,26 @@ fun ProductItem(
 }
 
 @Composable
-private fun ProductImage(
+fun ProductImage(
     modifier: Modifier = Modifier,
     thumbnailUrl: String?,
     hasCoupon: Boolean
 ) {
-    Box {
+    var loadState by remember { mutableStateOf<AsyncImagePainter.State>(AsyncImagePainter.State.Empty) }
+
+    Box(modifier = modifier) {
         AsyncImage(
-            modifier = modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             model = thumbnailUrl,
             contentDescription = "product_thumbnail",
-            contentScale = ContentScale.Crop
+            contentScale = ContentScale.Crop,
+            onState = { state ->
+                loadState = state
+            }
         )
 
         // 쿠폰
-        if (hasCoupon) {
+        if (hasCoupon && loadState is AsyncImagePainter.State.Success) {
             Surface(
                 modifier = Modifier
                     .align(Alignment.BottomStart)
