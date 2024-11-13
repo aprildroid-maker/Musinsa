@@ -38,6 +38,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.airbnb.mvrx.compose.collectAsState
+import com.airbnb.mvrx.compose.mavericksViewModel
+import com.airbnb.mvrx.withState
 import com.musinsa.mobile.designsystem.header.HomeHeader
 import com.musinsa.mobile.domain.model.Content
 import com.musinsa.mobile.domain.model.ContentType
@@ -51,9 +54,9 @@ import kotlinx.coroutines.ObsoleteCoroutinesApi
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    viewModel: HomeViewModel = viewModel()
+    viewModel: HomeViewModel = mavericksViewModel()
 ) {
-    val uiState by viewModel.homeUiState.collectAsStateWithLifecycle()
+    val uiState by viewModel.collectAsState()
 
     Scaffold(
         modifier = Modifier.fillMaxSize()
@@ -105,6 +108,7 @@ private fun HomeScreenLoaded(
     var headerState by remember { mutableStateOf<HomeUiModel?>(null) }
 
     LazyColumn(
+        modifier = modifier,
         state = listState,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {

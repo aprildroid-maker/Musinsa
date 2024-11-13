@@ -5,21 +5,22 @@
 
 package com.musinsa.mobile.home
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import com.airbnb.mvrx.MavericksViewModel
+import com.airbnb.mvrx.MavericksViewModelFactory
+import com.airbnb.mvrx.hilt.AssistedViewModelFactory
+import com.airbnb.mvrx.hilt.hiltMavericksViewModelFactory
 import com.musinsa.mobile.domain.repository.HomeRepository
 import com.musinsa.mobile.home.model.HomeUiModel
-import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@HiltViewModel
-class HomeViewModel @Inject constructor(
+class HomeViewModel @AssistedInject constructor(
+    @Assisted initialState: HomeUiState,
     private val homeRepository: HomeRepository
-) : ViewModel() {
-    val homeUiState = MutableStateFlow<HomeUiState>(HomeUiState.Loading)
+) : MavericksViewModel<HomeUiState>(initialState) {
     private var job: Job? = null
 
     init {
@@ -32,13 +33,20 @@ class HomeViewModel @Inject constructor(
         }
 
         job = viewModelScope.launch {
-            homeUiState.value = HomeUiState.Loading
+            setState { HomeUiState.Loading }
             homeRepository.getHomeList().onSuccess { homeList ->
                 val uiModel = homeList.map { HomeUiModel.from(it) }
-                homeUiState.value = HomeUiState.Success(uiModel)
+                setState { HomeUiState.Success(uiModel) }
             }.onFailure {
-                homeUiState.value = HomeUiState.Error
+                setState { HomeUiState.Error }
             }
         }
     }
+
+    @AssistedFactory
+    interface Factory : AssistedViewModelFactory<HomeViewModel, HomeUiState> {
+        override fun create(state: HomeUiState): HomeViewModel
+    }
+
+    companion object : MavericksViewModelFactory<HomeViewModel, HomeUiState> by hiltMavericksViewModelFactory()
 }
