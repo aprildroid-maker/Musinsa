@@ -3,6 +3,7 @@
 
 # 아키텍처
 ![img.png](project_dependency_structure.png)
+![img_udf.png](mad-arch-ui-udf.png)
 
 * [UDF(Unidirectional Data Flow)](https://developer.android.com/topic/architecture/ui-layer?hl=ko#udf) 패턴을 적용하여 데이터의 단방향 흐름을 유지하고 있습니다.
 - 상위 레이어는 하위 레이어 데이터 상태 변경에 유연하게 대응할 수 있습니다.
