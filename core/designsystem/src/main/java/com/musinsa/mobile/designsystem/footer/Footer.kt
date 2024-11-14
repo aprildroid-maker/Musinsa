@@ -6,6 +6,7 @@
 package com.musinsa.mobile.designsystem.footer
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
@@ -16,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 
@@ -49,5 +51,26 @@ fun Footer(
                 )
             }
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun PreviewFooter() {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Footer(
+            text = "새로운 추천",
+            iconUrl = null,
+            onClick = { }
+        )
+
+        Footer(
+            text = "더보기",
+            iconUrl = null,
+            onClick = { }
+        )
     }
 }

@@ -2,6 +2,7 @@ package com.musinsa.mobile.designsystem.header
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -76,11 +77,25 @@ fun Header(
 @Preview
 @Composable
 private fun PreviewHeader(modifier: Modifier = Modifier) {
-    Header(
-        modifier = modifier,
-        title = "최신 상품",
-        linkUrl = null,
-        iconUrl = null,
-        onClick = { }
-    )
+    Column(
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Header(
+            modifier = modifier,
+            title = "최신 상품",
+            linkUrl = null,
+            iconUrl = null,
+            onClick = { }
+        )
+
+        Header(
+            modifier = modifier,
+            title = "최신 상품",
+            linkUrl = "https://www.musinsa.com",
+            iconUrl = null,
+            onClick = { }
+        )
+    }
+
 }

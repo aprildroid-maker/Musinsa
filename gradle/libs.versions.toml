@@ -7,7 +7,7 @@ androidxBrowser = "1.8.0"
 
 # Compose
 activityCompose = "1.9.3"
-composeBom = "2024.10.01"
+composeBom = "2024.11.00"
 mavericks = "3.0.9"
 
 # Kotlin

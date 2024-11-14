@@ -29,7 +29,7 @@ class HomeViewModel @AssistedInject constructor(
 ) : MavericksViewModel<HomeUiState>(initialState) {
 
     private var job: Job? = null
-    private val originData = mutableListOf<Home>()
+    private val networkData = mutableListOf<Home>()
 
     init {
         fetch()
@@ -40,11 +40,11 @@ class HomeViewModel @AssistedInject constructor(
             job?.cancel()
         }
 
-        originData.clear()
+        networkData.clear()
         job = viewModelScope.launch {
             setState { HomeUiState.Loading() }
             homeRepository.getHomeList().onSuccess { homeList ->
-                originData.addAll(homeList)
+                networkData.addAll(homeList)
                 val uiModel = homeList.map { HomeUiModel.from(it) }
                 setState { HomeUiState.Success(uiModel) }
             }.onFailure {
@@ -57,22 +57,23 @@ class HomeViewModel @AssistedInject constructor(
         withState { state ->
             if (state is HomeUiState.Success) {
                 val uiModel = state.data.getOrNull(index)
-                var needMore = true
+                var needMore = uiModel?.footer
                 if (uiModel != null) {
+                    val networkContents = networkData[index].contents
                     val newData = when (uiModel.footer?.type) {
                         FooterType.MORE -> {
                             when (uiModel.type) {
-                                ContentType.GRID ->
-                                    originData[index].contents?.goods?.take(uiModel.contents.size + 3)
-                                        ?.map { ContentUiModel.fromDomainModel(it) }
+                                ContentType.GRID -> {
+                                    needMore = updateNeedMore(networkContents?.goods?.size, uiModel.contents.size, needMore)
+                                    networkContents?.goods?.take(uiModel.contents.size + 3)?.map { ContentUiModel.fromDomainModel(it) }
+                                }
 
-
-                                ContentType.STYLE -> originData[index].contents?.styles?.take(uiModel.contents.size + 3)
-                                    ?.map { ContentUiModel.fromDomainModel(it) }
-
+                                ContentType.STYLE -> {
+                                    needMore = updateNeedMore(networkContents?.styles?.size, uiModel.contents.size, needMore)
+                                    networkContents?.styles?.take(uiModel.contents.size + 3)?.map { ContentUiModel.fromDomainModel(it) }
+                                }
                                 else -> null
                             }
-
                         }
 
                         FooterType.REFRESH -> {
@@ -85,16 +86,40 @@ class HomeViewModel @AssistedInject constructor(
                     }
 
                     if (newData != null) {
-                        setState {
-                            HomeUiState.Success(
-                                state.data.toMutableList().apply {
-                                    set(index, uiModel.copy(contents = newData))
-                                }
-                            )
-                        }
+                        updateStateWithNewData(state, index, uiModel, newData, needMore)
                     }
                 }
             }
+        }
+    }
+
+    private fun updateNeedMore(
+        originDataSize: Int?,
+        currentContentSize: Int,
+        footer: Footer?
+    ): Footer? {
+        return originDataSize?.minus(currentContentSize.plus(3))?.let {
+            if (it > 0) {
+                footer
+            } else {
+                null
+            }
+        }
+    }
+
+    private fun updateStateWithNewData(
+        state: HomeUiState.Success,
+        index: Int,
+        uiModel: HomeUiModel,
+        newData: List<ContentUiModel?>,
+        needMore: Footer?
+    ) {
+        setState {
+            HomeUiState.Success(
+                state.data.toMutableList().apply {
+                    set(index, uiModel.copy(contents = newData, footer = needMore))
+                }
+            )
         }
     }
 

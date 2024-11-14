@@ -13,6 +13,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -31,8 +32,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.airbnb.mvrx.compose.collectAsState
 import com.airbnb.mvrx.compose.mavericksViewModel
 import com.musinsa.mobile.designsystem.footer.Footer
@@ -81,7 +82,8 @@ private fun HomeScreenLoaded(
 
     LazyColumn(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+        contentPadding = PaddingValues(bottom = 32.dp)
     ) {
         uiState.data.forEachIndexed { index, uiModel ->
             if (uiModel.header != null) {
@@ -158,9 +160,7 @@ private fun HomeScreenError(modifier: Modifier = Modifier) {
         contentAlignment = Alignment.Center
     ) {
         Column(
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.onBackground)
-                .padding(32.dp),
+            modifier = Modifier.padding(32.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Icon(imageVector = Icons.Default.Info, contentDescription = "Error")
@@ -176,4 +176,16 @@ private fun navigateToLink(context: Context, url: String?, color: Int) {
         url = url,
         toolbarColor = color
     )
+}
+
+@Preview
+@Composable
+private fun PreviewHomeScreenError() {
+    HomeScreenError()
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun PreviewHomeScreenLoading() {
+    HomeScreenLoading()
 }

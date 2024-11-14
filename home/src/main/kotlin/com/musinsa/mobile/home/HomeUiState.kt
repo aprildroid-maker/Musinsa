@@ -8,7 +8,6 @@ package com.musinsa.mobile.home
 import com.airbnb.mvrx.MavericksState
 import com.musinsa.mobile.home.model.HomeUiModel
 
-
 sealed interface HomeUiState : MavericksState {
     data class Loading(
         private val empty: String = ""

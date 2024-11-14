@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
@@ -60,6 +61,7 @@ internal fun ScrollGoods(
     ) {
         items(styles) {
             ProductItem(
+                modifier = Modifier.width(120.dp),
                 brandName = it.brandName,
                 price = it.price,
                 saleRate = it.saleRate,
