@@ -14,14 +14,14 @@
 
 * `app` module - app level의 클래스를 갖고 있으며 `home` 모듈과 `core` 모듈 의존성을 갖고 있습니다.
 
-* `home` modules - `core` 모듈에 대해 의존성을 가지며 해당 UI 화면을 담당합니다.
+* `home` module - `core` 모듈에 대해 의존성을 가지며 해당 UI 화면을 담당합니다.
 
-* `core:` modules - 앱의 다른 모듈 간에 공유해야 하는 컴포넌트 및 특정 종속성을 포함하는 공통 라이브러리 모듈입니다.
+* `core` modules - 앱의 다른 모듈 간에 공유해야 하는 컴포넌트 및 특정 종속성을 포함하는 공통 라이브러리 모듈입니다.
 
 # Modules
 
 * `app` - navigation 과 UI Scaffolding 을 담당합니다. ex) MainActivity, Compose Navigation
-* `feature:` - 특정 기능, 유저와 마주하는 모듈입니다. UI 컴포넌트와 ViewModel을 포함하고 있습니다.
+* `feature` - 특정 기능, 유저와 마주하는 모듈입니다. UI 컴포넌트와 ViewModel을 포함하고 있습니다.
     * `feature:home` - 서버로부터 데이터를 받아 사용자에게 홈 화면을 보여줍니다.
 * `core:domain` - 비즈니스 로직에 사용되는 model 또는 repository 를 갖습니다.
 * `core:data` - 네트워크 요청과 응답을 처리합니다.
