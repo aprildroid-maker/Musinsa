@@ -57,7 +57,8 @@ internal fun ScrollGoods(
 ) {
     LazyRow(
         modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(4.dp)
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        contentPadding = PaddingValues(horizontal = 12.dp)
     ) {
         items(styles) {
             ProductItem(
